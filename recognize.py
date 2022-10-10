@@ -13,6 +13,8 @@ def recognize_trace(origin_end, extreme, stop_time):
         if origin_end[1][1][0] > 145 and origin_end[1][1][1] > 119:
             return 7
     else:
+        if origin_end[0][1][1] > 230:
+                return 1
         if origin_end[0][1][0] > 145 and origin_end[0][1][1] < 119:
             return 8
         if origin_end[0][1][0] > 145 and origin_end[0][1][1] > 119:
@@ -23,7 +25,7 @@ def recognize_trace(origin_end, extreme, stop_time):
         if origin_end[0][1][0] < 145 and origin_end[0][1][1] < 119:
             return 0
         else:
-            if origin_end[0][0][0] > 145 and origin_end[0][0][1] < 119:
+            if origin_end[0][1][1] > 230:
                 return 1
             if origin_end[0][1][1] > 200:
                     return 3

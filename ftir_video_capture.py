@@ -99,7 +99,7 @@ while(True):
 			if leave_time == 0:
 				leave_time = time.time()
 				origin_end.append([finger_pos[0], finger_pos[-1]])
-				print(origin_end)
+				#print(origin_end)
 				finger_pos = []
 			if time.time() - leave_time > 0.7: # The writer has finished writing.
 				number = recognize_trace(origin_end, extreme, leave_times)
@@ -109,7 +109,7 @@ while(True):
 				leave_time = 0
 				leave_times = 0
 				text1 = "prediction :" + str(number)
-				print(number)
+				print("prediction: ", number)
 
 	
 	
