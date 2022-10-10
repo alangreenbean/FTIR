@@ -6,14 +6,19 @@ from recognize import recognize_trace
 def nothing(x):
     pass
 
+# def showtext(dispay, text):
+# 	c_time = time.time()
+# 	while(time.time() - c_time < 3):
+# 		cv2.putText(display, text, (100,100),
+# 						cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv2.LINE_AA)
 # Choose your webcam: 0, 1, ...
 cap = cv2.VideoCapture(1)
 if not cap.isOpened():
 	cap.open()
 
-cv2.namedWindow('Threshold Sliders')
-cv2.createTrackbar('R', 'Threshold Sliders', 50, 255, nothing)
-cv2.createTrackbar('B', 'Threshold Sliders', 50, 255, nothing)
+#cv2.namedWindow('Threshold Sliders')
+#cv2.createTrackbar('R', 'Threshold Sliders', 0, 255, nothing)
+#cv2.createTrackbar('B', 'Threshold Sliders', 0, 255, nothing)
 
 status = 0 # Not recognizing, status = 1 => recognizing.
 leave_times = 0 # The times that the finger leaves the pad.
@@ -34,12 +39,12 @@ while(True):
 	zeros = np.zeros(frame.shape[:2], dtype="uint8")
 
 	# get the current value of the slider
-	r_thresh = cv2.getTrackbarPos('R', 'Threshold Sliders')
-	b_thresh = cv2.getTrackbarPos('B', 'Threshold Sliders')
+	#r_thresh = cv2.getTrackbarPos('R', 'Threshold Sliders')
+	#b_thresh = cv2.getTrackbarPos('B', 'Threshold Sliders')
 
 	# Perform thresholding to each channel
-	_, r_thresh_binary = cv2.threshold(r, r_thresh, 255, cv2.THRESH_BINARY)
-	_, b_thresh_binary_inv = cv2.threshold(b, b_thresh, 255, cv2.THRESH_BINARY_INV)
+	_, r_thresh_binary = cv2.threshold(r, 135, 255, cv2.THRESH_BINARY)
+	_, b_thresh_binary_inv = cv2.threshold(b, 200, 255, cv2.THRESH_BINARY_INV)
 
 	# Get the final result using bitwise operation
 	result = cv2.bitwise_and(r_thresh_binary, b_thresh_binary_inv, mask = None)
@@ -50,21 +55,30 @@ while(True):
 	display = cv2.cvtColor(result, cv2.COLOR_GRAY2BGR)
 	cv2.drawContours(display, contours, -1, (0,0,255))	
 	if len(contours) > 0:
-		if leave_time > 0:
-			leave_times += 1
-		leave_time = 0
-		if status == 0: # Start recognizing.
-			status = 1
 		x_main = 0
 		y_main = 0
 		rad_main = 0
 		for cnt in contours:
-			area = cv2.contourArea(cnt)
 			(x,y), radius = cv2.minEnclosingCircle(cnt)
 			if radius > rad_main:
 				rad_main = radius
 				x_main = x
 				y_main = y
+		if rad_main < 20:
+			continue
+		if leave_time > 0:
+			leave_times += 1
+		leave_time = 0
+		if status == 0: # Start recognizing.
+			status = 1
+		# for cnt in contours:
+		# 	area = cv2.contourArea(cnt)
+		# 	(x,y), radius = cv2.minEnclosingCircle(cnt)
+		# 	if radius > rad_main:
+		# 		rad_main = radius
+		# 		x_main = x
+		# 		y_main = y
+		# print(rad_main)
 		x_main = int(x_main)
 		y_main = int(y_main)
 		rad_main = int(rad_main)
@@ -73,7 +87,8 @@ while(True):
 		cv2.putText(display, text, (x_main, y_main),
 					cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv2.LINE_AA)
 		cv2.circle(display, (x_main, y_main), rad_main, (0, 255, 0))
-		if time.time() - last_record > 0.02:
+		if time.time() - last_record > 0.1:
+			last_record = time.time()
 			finger_pos.append((x_main, y_main))
 			extreme[0] = max(x_main, extreme[0])
 			extreme[1] = max(y_main, extreme[1])
@@ -84,19 +99,23 @@ while(True):
 			if leave_time == 0:
 				leave_time = time.time()
 				origin_end.append([finger_pos[0], finger_pos[-1]])
+				print(origin_end)
 				finger_pos = []
-			if time.time() - leave_time > 0.7:# The writer has finished writing.
+			if time.time() - leave_time > 0.7: # The writer has finished writing.
 				number = recognize_trace(origin_end, extreme, leave_times)
 				origin_end = []
 				status = 0
 				finger_pos = []
 				leave_time = 0
 				leave_times = 0
+				text1 = "prediction :" + str(number)
 				print(number)
 
+	
+	
 	# Show the frame	
-	cv2.imshow("Red", cv2.merge([zeros, zeros, r_thresh_binary]))
-	cv2.imshow("Blue", cv2.merge([b_thresh_binary_inv, zeros, zeros]))
+	#cv2.imshow("Red", cv2.merge([zeros, zeros, r_thresh_binary]))
+	#cv2.imshow("Blue", cv2.merge([b_thresh_binary_inv, zeros, zeros]))
 	cv2.imshow("display", display)
 #	cv2.imshow('frame', result)
 

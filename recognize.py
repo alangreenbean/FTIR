@@ -4,53 +4,102 @@ import math
 import time
 
 def recognize_trace(origin_end, extreme, stop_time):
-	x_max = extreme[0]
-	y_max = extreme[1]
-	x_min = extreme[2]
-	y_min = extreme[3]
-	if x_max == x_min:
-		x_max += 0.000000001
-	if y_max == y_min:
-		y_max += 0.000000001
-#	print(stop_time)
-#	print(origin_end)
-	for session in range(stop_time + 1):
-		for j in range(2):
-#			print(session)
-#			print(j)
-			origin_end[session][j] = ((origin_end[session][j][0] - x_min) / (x_max - x_min), 2 * (origin_end[session][j][1] - y_min) / (y_max - y_min))
-#	print(origin_end)
-	if stop_time > 0:
-		# The number is 4, 5, or 7
-		if origin_end[0][0][1] > 1.75 and origin_end[1][1][1] > 1.75:
-			return 5
-		elif origin_end[0][1][0] > 0.8:
-			return 4
-		else:
-			return 7
-	else:
-		# The number is 0, 1, 2, 3, 6, 8, or 9
-		if math.sqrt((origin_end[0][0][0] - origin_end[0][1][0])**2 + (origin_end[0][0][1] - origin_end[0][1][1])**2) < 0.3:
-			# The number is 0 or 8
-			if origin_end[0][1][0] > 0.75:
-				return 8
-			else:
-				return 0
-		else:
-			# The number is 1, 2, 3, 6, or 9
-			if origin_end[0][0][0] < 0.3 and origin_end[0][1][0] < 0.3:
-				return 3
-			elif origin_end[0][0][0] > 0.6 and origin_end[0][1][0] > 0.6:
-				return 9
-			else:
-				# The number is 1, 2, or 6
-				if origin_end[0][0][1] < 1.9:
-			   		return 2
-				if origin_end[0][1][1] < 0.1:
-					return 1
-				else:
-					return 6
-	return -1
+
+    if stop_time > 0:
+        if origin_end[1][1][0] < 145 and origin_end[1][1][1] > 119:
+            return 4
+        if origin_end[1][1][0] > 145 and origin_end[1][1][1] < 119:
+            return 5
+        if origin_end[1][1][0] > 145 and origin_end[1][1][1] > 119:
+            return 7
+    else:
+        if origin_end[0][1][0] > 145 and origin_end[0][1][1] < 119:
+            return 8
+        if origin_end[0][1][0] > 145 and origin_end[0][1][1] > 119:
+            if origin_end[0][0][0] > 145 and origin_end[0][0][1] > 119:
+                return 9
+            else:
+                return 2
+        if origin_end[0][1][0] < 145 and origin_end[0][1][1] < 119:
+            return 0
+        else:
+            if origin_end[0][0][0] > 145 and origin_end[0][0][1] < 119:
+                return 1
+            if origin_end[0][1][1] > 200:
+                    return 3
+            else:
+                    return 6
+            
+            
+        # if origin_end[0][0][0] < 145 and origin_end[0][0][1] < 119:
+        #     if origin_end[0][1][0] < 145 and origin_end[0][1][1] < 119:
+        #         return 0
+        #     if origin_end[0][1][0] > 145 and origin_end[0][1][1] > 119:
+        #         return 2
+        #     else:
+        #         if origin_end[0][1][1] > 200:
+        #             return 3
+        #         else:
+        #             return 6
+        # else:
+        #     if origin_end[0][1][0] < 145 and origin_end[0][1][1] > 119:
+        #         return 1
+        #     if origin_end[0][1][0] > 145 and origin_end[0][1][1] < 119:
+        #         return 8
+        #     if origin_end[0][1][0] > 145 and origin_end[0][1][1] > 119:
+        #         return 9
+
+    return -1
+            
+
+
+# 	x_max = extreme[0]
+# 	y_max = extreme[1]
+# 	x_min = extreme[2]
+# 	y_min = extreme[3]
+# 	if x_max == x_min:
+# 		x_max += 0.000000001
+# 	if y_max == y_min:
+# 		y_max += 0.000000001
+# #	print(stop_time)
+# 	# print(origin_end)
+# 	for session in range(stop_time + 1):
+# 		for j in range(2):
+# #			print(session)
+# #			print(j)
+# 			origin_end[session][j] = ((origin_end[session][j][0] - x_min) / (x_max - x_min), 2 * (origin_end[session][j][1] - y_min) / (y_max - y_min))
+# 	print(origin_end)
+# 	if stop_time > 0:
+# 		# The number is 4, 5, or 7
+# 		if origin_end[0][0][1] < 0.25 and origin_end[1][1][1] < 0.25:
+# 			return 5
+# 		elif origin_end[0][1][0] > 0.8:
+# 			return 4
+# 		else:
+# 			return 7
+# 	else:
+# 		# The number is 0, 1, 2, 3, 6, 8, or 9
+# 		if math.sqrt((origin_end[0][0][0] - origin_end[0][1][0])**2 + (origin_end[0][0][1] - origin_end[0][1][1])**2) < 0.3:
+# 			# The number is 0 or 8
+# 			if origin_end[0][1][0] > 0.75:
+# 				return 8
+# 			else:
+# 				return 0
+# 		else:
+# 			# The number is 1, 2, 3, 6, or 9
+# 			if origin_end[0][0][0] < 0.3 and origin_end[0][1][0] < 0.3:
+# 				return 3
+# 			elif origin_end[0][0][0] > 0.6 and origin_end[0][1][0] > 0.6:
+# 				return 9
+# 			else:
+# 				# The number is 1, 2, or 6
+# 				if origin_end[0][0][1] > 0.1:
+# 			   		return 2
+# 				if origin_end[0][1][1] > 1.9:
+# 					return 1
+# 				else:
+# 					return 6
+# 	return -1
 		
 #	size = len(finger_pos)
 #	finger_pos = normalize(finger_pos)
@@ -139,6 +188,3 @@ if __name__ == "__main__":
 	ex1 = [1.5, 0, -2, -4]
 	st1 = 1
 	print(recognize_trace(oe1, ex1, st1))	
-
-
-
