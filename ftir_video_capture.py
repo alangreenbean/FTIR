@@ -108,8 +108,10 @@ while(True):
 				finger_pos = []
 				leave_time = 0
 				leave_times = 0
-				text1 = "prediction :" + str(number)
+				text1 = "prediction: " + str(number)
 				print("prediction: ", number)
+				# Print the result on image
+				cv2.putText(display, text1, (0,20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv2.LINE_AA)
 
 	
 	
